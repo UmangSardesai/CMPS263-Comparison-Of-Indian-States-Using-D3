@@ -1,5 +1,6 @@
 svg {
 font: 10px sans-serif;
+align: center;
 }
 .caption {
 font-weight: bold;
@@ -36,18 +37,35 @@ pointer-events: none;
   stroke-opacity: .7;
   stroke-width: 0.1;
 }
-.foot-links a, .foot-links p{
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.PopButton,
+.LiteracyButton,
+.EmploymentButton,
+.CrimeButton
+{
+  color: white;
+  background-color: #333745;
+  border-color: #285e8e;
+  font-family: Lobster, Monospace;
+}
+
+.foot-links a, .foot-links p, .foot-links li, .col-sm-4, .row-1{
   display: block;
-  color: rgb(63, 63, 63);
   transition: all 0.2s ease-in-out;
   -webkit-transition: all 0.2s ease-in-out;
   text-decoration: none;
   font-family: OpenSansRegular, Arial, sans-serif;
   font-size: 10px;
-  color: rgb(63, 63, 63);
+  color: rgb(241, 241, 241);
   padding-bottom: 5px;
-  text-shadow: rgb(255, 255, 255) 1px 1px 0px;
+  /*text-shadow: rgb(255, 255, 255) 1px 1px 0px;*/
+}
 
+.col-sm-4 h4, .row-1 h4{
+  font-family: Lobster, Monospace;
 }
 
 .seldist{
@@ -63,30 +81,30 @@ a:link {
   padding-top: 5px;
 }
 #footer{
-  background: rgb(241, 241, 241);
+  background: #333745;
   border-top: 1px solid rgb(222, 222, 222);
   margin-top: -2px;
-  padding-top: 0px;
+  padding-top: 10px;
   padding-bottom: 5px;
   padding-left: 25px;
-  margin-left: 80px;
-  margin-right: 80px;
-  margin-bottom: 25px;
+  /*margin-left: 80px;*/
+  /*margin-right: 80px;*/
+  /*margin-bottom: 25px;*/
 }
 
 .foot-header{
-  font-family: OpenSansBold, Arial, sans-serif;
+  font-family: Lobster, Monospace;
   font-size: 18px;
-  color: rgb(63, 63, 63);
+  color: rgb(241, 241, 241);
   padding-bottom: 20px;
-  text-shadow: rgb(255, 255, 255) 1px 1px 0px;
+  /*text-shadow: rgb(255, 255, 255) 1px 1px 0px;*/
 }
 
 #footer .container{
 
-  max-width: 1300px;
+  /*max-width: 1300px;*/
 
-  max-width: 1300px;
+  /*max-width: 1300px;*/
 
 
    }
@@ -100,7 +118,7 @@ a:link {
 }
 #bottom-footer a{
   text-decoration: none;
-  color: #626262;
+  color: rgb(241, 241, 241);
   -webkit-transition: all .2s ease-in-out;
   -moz-transition: all .2s ease-in-out;
   -o-transition: all .2s ease-in-out;
@@ -110,9 +128,9 @@ a:link {
   padding: 0px 15px;
   border-right: 1px solid #ccc;
   font-family: 'OpenSansRegular', Arial, sans-serif;
-  color: #626262;
+  color: rgb(241, 241, 241);
   padding: 0 12px;
-  text-shadow: 1px 1px 0 rgba(255,255,255,1);
+  /*text-shadow: 1px 1px 0 rgba(255,255,255,1);*/
 }
 #bottom-footer .phone img{
   margin-right: 7px;
@@ -125,14 +143,14 @@ a:link {
   color: #d10029!important;
   position: relative;
   top: -5px;
-  text-shadow: 1px 1px 0 rgba(255,255,255,1)!important;
+  /*text-shadow: 1px 1px 0 rgba(255,255,255,1)!important;*/
 }
 #bottom-footer .phone .red small{
   font-family: 'OpenSansRegular', Arial, sans-serif;
   font-size: 12px!important;
   display: block;
   color: #626262!important;
-  text-shadow: 1px 1px 0 rgba(255,255,255,1)!important;
+  /*text-shadow: 1px 1px 0 rgba(255,255,255,1)!important;*/
   margin-top: -5px;
 }
 #final-footer{

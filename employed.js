@@ -13,10 +13,11 @@ var path = d3.geo.path()
 .projection(projection);
 
 var color = d3.scale.threshold()
-.domain([1, 2, 3, 5, 10, 25, 50, 100, 200])
-// .range([ "#fee8c8", "#fdd49e", "#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#b30000", "#7f0000"]);
-.range(['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']);
-    
+.domain([20, 25, 30, 35, 40, 45, 50, 60])
+.range(['#fff5eb','#fee6ce','#fdd0a2','#fdae6b','#fd8d3c','#f16913','#d94801','#8c2d04']);
+// .range(['#fff7fb','#ece7f2','#d0d1e6','#a6bddb','#74a9cf','#3690c0','#0570b0','#034e7b']);
+    // [ "#fee8c8", "#fdd49e", "#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#b30000", "#7f0000"]
+
 var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height)
@@ -24,7 +25,7 @@ var svg = d3.select("body").append("svg")
     
 // A position encoding for the key only.
 var x = d3.scale.linear()
-    .domain([0, 200])
+    .domain([0, 60])
     .range([0, 480]);
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -61,7 +62,7 @@ z: d
 g.call(xAxis).append("text")
 .attr("class", "caption")
 .attr("y", -6)
-.text("Population of India");
+.text("Percent Employed (out of Total Population) in India");
 
 //Function to create Indian state map
 function rect_clicked(d) {
@@ -92,9 +93,8 @@ function rect_clicked(d) {
         len = sel_district.length;
         for (var i = 0; i < len; i++) {
             sel_district[i].parentElement.removeChild(sel_district[i]);
-        }
-        
-        //create_bar({statecode:"00",districtcode:"000",name:"India"});
+        }        
+
         d3.json("indiaST.json", function(error, ut) {
         if (error) throw error;
         var states = topojson.feature(ut, ut.objects.IND_STATE);
@@ -106,27 +106,24 @@ function rect_clicked(d) {
         .datum(topojson.feature(ut, ut.objects.IND_STATE))
              .attr("class", "state-border")
              .attr("d", path); 
-
+        // var literate_count = myObj['districts'][0][(d.properties.name).toUpperCase()][0]['literacy_rate'];     
         svg.append("g")
           .attr("class", "#states")
           .attr("clip-path", "url(#clip-land)")
         .selectAll("path")
         .data(topojson.feature(ut, ut.objects.IND_STATE).features)
         .enter().append("path")
-        .style("fill", function(d) { 
-                var num="white";
-                if(d.properties.name == "POK"){
-                    num = "gray";
-                }else{
-                    try {
-                        num = color((myObj['districts'][0][(d.properties.name).toUpperCase()][0]['pop']) * 0.000001);
-                    }
-                    catch(err) {
-                        console.log(err.message);
-                    } 
+        .style("fill", function(d) {
+            var num = d.properties.outofschool * 0.000001;
+            var state = (d.properties.name).toUpperCase();
+            try {
+                num = myObj['districts'][0][(d.properties.name).toUpperCase()][0]['employed_rate'];
                 }
-                return num; 
-            })
+            catch(err) {
+            console.log(err.message);
+            } 
+            return color(num); 
+        })
             .attr("d", path)
         .on("click", state_clicked)
         .on("mouseover", function(d) {
@@ -137,19 +134,7 @@ function rect_clicked(d) {
                         div.style("left", (d3.event.pageX) + "px")
                             .style("top", (d3.event.pageY - 28) + "px");
                         div.append("div").text(d.properties.statename);
-                        
-                            var tmp = "" + myObj['districts'][0][(d.properties.name).toUpperCase()][0]['pop'];
-                            var stnum = "";
-                            var tmplen = tmp.length;
-                            console.log(tmp+"|"+tmplen);
-                            if(tmplen>6){
-                                stnum = tmp.substr(0,tmplen-6)+","+tmp.substr(tmplen-6,3)+","+tmp.substr(tmplen-3,3);
-                            }else if(tmplen>3){
-                                stnum = tmp.substr(0,tmplen-3)+","+tmp.substr(tmplen-3,3);
-                            }else{
-                                stnum = tmp;
-                            }
-                        div.append("div").text("Population: "+stnum);
+                        div.append("div").text("Employed: "+ myObj['districts'][0][(d.properties.name).toUpperCase()][0]['employed_rate']+"%")
                 })
                 // fade out tooltip on mouse out
                 .on("mouseout", function(d) {
@@ -169,7 +154,7 @@ function rect_clicked(d) {
       .attr("x", 500)
       .attr("y", 80)
       .style("text-anchor", "middle")
-      .text("Instructions: Click a State to transition or hover over the state to show total population for the state.")
+      .text("Instructions: Click a State to transition or hover over the state to show percent employed for the state.")
       .attr("style","font-weight: normal; font-size: 12px;");
     });
     
@@ -232,7 +217,7 @@ function state_clicked(d) {
                             num = "gray";
                         }else{
                             try {
-                                num = color((myObj['districts'][0][(d.properties.name)][0]['pop']) * 0.000001);
+                                num = color(myObj['districts'][0][(d.properties.name)][0]['employed_rate']);
                             }
                             catch(err) {
                                 console.log(err.message);
@@ -240,7 +225,7 @@ function state_clicked(d) {
                         }
                         return num; 
                     })
-                //District Level                
+                //District Level
                     .attr("d", path)
                 .on("click", district_clicked)
                 .on("mouseover", function(d) {
@@ -250,24 +235,9 @@ function state_clicked(d) {
                                     .style("opacity", .9);
                                 div.style("left", (d3.event.pageX) + "px")
                                     .style("top", (d3.event.pageY - 28) + "px");
-                                div.append("div").text(d.properties.name);
-                                // div.append("div").text("Literacy Rate: "+myObj['districts'][0][d.properties.name][0]['pop'])
-                                var tmp = "" + myObj['districts'][0][d.properties.name][0]['pop'];
-                            var stnum = "";
-                            var tmplen = tmp.length;
-                            console.log(tmp+"|"+tmplen);
-                            if(tmplen>6){
-                                stnum = tmp.substr(0,tmplen-6)+","+tmp.substr(tmplen-6,3)+","+tmp.substr(tmplen-3,3);
-                            }else if(tmplen>3){
-                                stnum = tmp.substr(0,tmplen-3)+","+tmp.substr(tmplen-3,3);
-                            }else{
-                                stnum = tmp;
-                            }
-                    
-                            if(d.properties.name == "POK"){
-                                stnum = "No Data";
-                            }
-                        div.append("div").text("Population: "+stnum);                            
+                                div.append("div").text("District: "+d.properties.name);
+                                div.append("div").text("Employed: "+myObj['districts'][0][d.properties.name][0]['employed_rate']+"%")
+
                         })
                         // fade out tooltip on mouse out
                         .on("mouseout", function(d) {
@@ -277,6 +247,7 @@ function state_clicked(d) {
                                 .duration(0)
                                 .style("opacity", 0);
                         });
+
                 
                 svg.append("path")
                 .datum(topojson.mesh(districts, districts.objects.Dist, function(a, b){ return (a.properties.statecode== state_id || b.properties.statecode== state_id);}))
@@ -288,7 +259,7 @@ function state_clicked(d) {
                   .attr("x", 500)
                   .attr("y", 80)
                   .style("text-anchor", "middle")
-                  // .text("Select a District to transition")
+                  // .text("Click a District to transition")
                   .attr("style","font-weight: normal; font-size: 12px;");
                 
                 svg.append("text")
@@ -296,7 +267,7 @@ function state_clicked(d) {
                   .attr("x", 500)
                   .attr("y", 80)
                   .style("text-anchor", "middle")
-                  .text("Instructions: Click a District to transition or click away from the state to return to previous map.")
+                  .text("Instructions: Click a District to transition or click away from the state to return to previous map or hover over the district to show percent employed for that district.")
                   .attr("style","font-weight: normal; font-size: 12px;");
             });
         }        
@@ -313,3 +284,61 @@ function state_clicked(d) {
 
 //Initialize India State map
 rect_clicked();
+
+// function Population(){
+
+//     var color = d3.scale.threshold()
+// .domain([.5, 1, 3, 5, 10, 15, 20, 25])
+// // .range([ "#fee8c8", "#fdd49e", "#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#b30000", "#7f0000"]);
+// .range(['#fff7fb','#ece7f2','#d0d1e6','#a6bddb','#74a9cf','#3690c0','#0570b0','#034e7b']);
+
+//     var g = svg.append("g")
+//         .attr("class", "key")
+//         .attr("transform", "translate(500,40)");
+//     g.selectAll("rect")
+//         .data(color.range().map(function(d, i) {
+//                     return {
+//     x0: i ? x(color.domain()[i - 1]) : x.range()[0],
+//     x1: i < color.domain().length ? x(color.domain()[i]) : x.range()[1],
+//     z: d
+//     };
+//     }))
+//     .enter().append("rect")
+//     .attr("height", 8)
+//     .attr("x", function(d) { return d.x0; })
+//     .attr("width", function(d) { return d.x1 - d.x0; })
+//     .style("fill", function(d) { return d.z; });
+//     g.call(xAxis).append("text")
+//     .attr("class", "caption")
+//     .attr("y", -6)
+//     .text("Literacy in Millions");
+// }
+
+// function Literacy() {
+
+//     var color = d3.scale.threshold()
+// .domain([.5, 1, 3, 5, 10, 15, 20, 25])
+// .range([ "#fee8c8", "#fdd49e", "#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#b30000", "#7f0000"]);
+// // .range(['#fff7fb','#ece7f2','#d0d1e6','#a6bddb','#74a9cf','#3690c0','#0570b0','#034e7b']);
+
+//     var g = svg.append("g")
+//         .attr("class", "key")
+//         .attr("transform", "translate(500,40)");
+//     g.selectAll("rect")
+//         .data(color.range().map(function(d, i) {
+//                     return {
+//     x0: i ? x(color.domain()[i - 1]) : x.range()[0],
+//     x1: i < color.domain().length ? x(color.domain()[i]) : x.range()[1],
+//     z: d
+//     };
+//     }))
+//     .enter().append("rect")
+//     .attr("height", 8)
+//     .attr("x", function(d) { return d.x0; })
+//     .attr("width", function(d) { return d.x1 - d.x0; })
+//     .style("fill", function(d) { return d.z; });
+//     g.call(xAxis).append("text")
+//     .attr("class", "caption")
+//     .attr("y", -6)
+//     .text("Population in Millions");
+// }
